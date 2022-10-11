@@ -2,3 +2,4 @@
 .vscode
 build/
 *.egg-info
+.ipynb_checkpoints
