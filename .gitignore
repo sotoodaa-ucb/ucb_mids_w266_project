@@ -3,3 +3,9 @@
 build/
 *.egg-info
 .ipynb_checkpoints
+
+__pycache__
+
+w266
+w266_project/data
+tmp

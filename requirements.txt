@@ -1,0 +1,19 @@
+keras==2.9.0
+Keras-Applications==1.0.8
+Keras-Preprocessing==1.1.2
+tensorboard==2.9.0
+tensorboard-data-server==0.6.1
+tensorboard-plugin-wit==1.8.1
+tensorflow-addons
+tensorflow-datasets==3.2.1
+tensorflow-estimator==2.9.0
+threadpoolctl==3.0.0
+tqdm==4.62.3
+pyarrow
+transformers
+fastparquet
+scikit-learn
+torch
+nltk
+wandb
+-e .
