@@ -10,10 +10,12 @@ tensorflow-estimator==2.9.0
 threadpoolctl==3.0.0
 tqdm==4.62.3
 pyarrow
+tabulate
 transformers
 fastparquet
 scikit-learn
 torch
 nltk
 wandb
+gdown
 -e .

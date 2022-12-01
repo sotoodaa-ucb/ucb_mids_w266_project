@@ -3,6 +3,7 @@ import os
 import sys
 from datetime import datetime
 
+import nltk
 import numpy as np
 import pandas as pd
 import torch
@@ -11,7 +12,29 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 from transformers import AdamW, get_linear_schedule_with_warmup
 
+from w266_project.dataset.core import MarkdownDatasetModule
 from w266_project.metrics import kendall_tau
+from w266_project.models.baseline import MarkdownModel
+
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+
+
+def main():
+    # Load dataset from disk.
+    dataset = MarkdownDatasetModule('./w266_project/data/train_all.parquet', './w266_project/data/train_orders.parquet')
+
+    # Obtain PyTorch data loaders.
+    train_loader, val_loader, _test_loader = dataset.get_loaders()
+
+    # Instantiate the model.
+    model = MarkdownModel()
+
+    # Begin training process.
+    model, _ = train(model, train_loader, val_loader, dataset.val_df, dataset.order_df, epochs=1)
+
+    # Clear resources.
+    cleanup(model)
 
 
 def cleanup(model):
@@ -174,3 +197,7 @@ def train(
     print("Preds score", kendall_tau_score)
 
     return model, y_pred
+
+
+if __name__ == '__main__':
+    main()

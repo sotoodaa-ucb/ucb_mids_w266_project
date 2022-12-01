@@ -5,14 +5,29 @@ from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 from transformers import AutoTokenizer
 
+from w266_project.preprocessor.core import Preprocessor
+
 
 class MarkdownDataset(Dataset):
+    """Encapsulates Markdown dataset into a single object.
+
+    :param markdown_rows: Pandas dataframe containing markdown content.
+    :param features: Extra features (number code cells, ratios, etc), key is row id.
+    :param preprocessor: Class of the type of preprocessor, which varies depending on the model selected.
+    :param md_max_len: Maximum length of markdown tokenized embedding.
+    :param total_max_len: Maximum Length of the tokenized input to bert.
+    :param model_name: Name of pretrained bert base model.
+
+    :attr markdown_tokenizer: Markdown Tokenizer class based on provided model_name.
+    :attr code_tokenizer: Code Tokenizer class based on provided model_name.
+    """
     def __init__(
         self,
         markdown_rows: pd.DataFrame,
         features: dict,
-        total_max_len: int = 400,
+        preprocessor: Preprocessor,
         md_max_len: int = 200,
+        total_max_len: int = 400,
         model_name: str = 'microsoft/codebert-base'
     ):
         super().__init__()
@@ -21,83 +36,28 @@ class MarkdownDataset(Dataset):
         self.md_max_len = md_max_len
         self.total_max_len = total_max_len
         self.model_name = model_name
-        self.tokenizer = AutoTokenizer.from_pretrained(
+        self.markdown_tokenizer = AutoTokenizer.from_pretrained(
             self.model_name,
             do_lower_case=True,
             use_fast=True
+        )
+        self.code_tokenizer = AutoTokenizer.from_pretrained(
+            self.model_name,
+            do_lower_case=True,
+            use_fast=True
+        )
+        self.preprocessor = preprocessor(
+            markdown_tokenizer=self.markdown_tokenizer,
+            code_tokenizer=self.code_tokenizer
         )
 
     def __getitem__(self, index):
         row = self.markdown_rows.iloc[index]
 
-        # Encode markdown into embedding.
-        inputs = self.tokenizer.encode_plus(
+        ids, mask, features = self.preprocessor.preprocess(
             row.source,
-            None,
-            add_special_tokens=True,
-            max_length=self.md_max_len,
-            padding="max_length",
-            return_token_type_ids=True,
-            truncation=True
+            self.features[row.id]["codes"],
         )
-
-        try:
-            # Encode code into embedding.
-            # Batch encode does not like empty lists!
-            code_cells = self.features[row.id]["codes"]
-            code_inputs = self.tokenizer.batch_encode_plus(
-                [str(cell) for cell in code_cells] if len(code_cells) > 0 else [''],
-                add_special_tokens=True,
-                max_length=23,
-                padding="max_length",
-                truncation=True
-            )
-        except Exception as e:
-            # print(self.features[row.id]["codes"])
-            code_cells = self.features[row.id]["codes"]
-            print(len(code_cells))
-            # print([str(cell) for cell in code_cells] if len(code_cells) > 0 else [''])
-            raise ValueError(e)
-
-        # Other features (number of markdown cells, number of code cells)
-        n_md = self.features[row.id]["total_md"]
-        n_code = self.features[row.id]["total_code"]
-
-        # Get percentage of markdown relative to total cells.
-        if n_md + n_code == 0:
-            features = torch.FloatTensor([0])
-        else:
-            features = torch.FloatTensor([n_md / (n_md + n_code)])
-
-        # Get markdown embedding tokens.
-        ids = inputs['input_ids']
-        for x in code_inputs['input_ids']:
-            # Exclude separator token.
-            ids.extend(x[:-1])
-
-        # Trim to max length.
-        ids = ids[:self.total_max_len]
-
-        # Apply padding if code + markdown tokens is less than max.
-        if len(ids) < self.total_max_len:
-            ids = ids + [self.tokenizer.pad_token_id, ] * (self.total_max_len - len(ids))
-
-        # Concatenated embeddings input as a tensor.
-        ids = torch.LongTensor(ids)
-
-        # Do the same for the attention mask.
-        mask = inputs['attention_mask']
-        for x in code_inputs['attention_mask']:
-            # Remove mask for separator toekn.
-            mask.extend(x[:-1])
-
-        mask = mask[:self.total_max_len]
-        if len(mask) != self.total_max_len:
-            mask = mask + [self.tokenizer.pad_token_id, ] * (self.total_max_len - len(mask))
-        mask = torch.LongTensor(mask)
-
-        # Tokens should be equal to the maximum length.
-        assert len(ids) == self.total_max_len
 
         # Tokens, attention mask, markdown percentage feature, and label.
         return ids, mask, features, torch.FloatTensor([row.pct_rank])
@@ -108,14 +68,8 @@ class MarkdownDataset(Dataset):
 
 class MarkdownDatasetModule:
     """Encapsulates Markdown dataset into a single object.
-
-    :param markdown_rows: Pandas dataframe containing markdown content.
-    :param features: Extra features (number code cells,
-    :param md_max_len: Maximum length of markdown tokenized embedding.
-    :param total_max_len: Maximum Length of the tokenized input to bert.
-    :param model_name: Name of pretrained bert base model.
-
-    :attr tokenizer: Tokenizer class based on provided model_name.
+    Receives the path to 'all' and 'order' parquet, generates percentile rankings,
+    and prepares the dataframe to be ingested into the DataLoader module.
     """
     def __init__(
         self,
@@ -125,7 +79,8 @@ class MarkdownDatasetModule:
         md_max_len: int = 200,
         valid_ratio: float = 0.3,
         test_ratio: float = 0.1,
-        model_name: str = 'microsoft/codebert-base'
+        model_name: str = 'microsoft/codebert-base',
+        preprocessor: Preprocessor = Preprocessor
     ):
         super().__init__()
         self.all_path = all_path,
@@ -135,6 +90,7 @@ class MarkdownDatasetModule:
         self.model_name = model_name
         self.valid_ratio = valid_ratio
         self.test_ratio = test_ratio
+        self.preprocessor = preprocessor
 
         self.all_df = pd.read_parquet(all_path)
         self.order_df = pd.read_parquet(order_path)
@@ -197,6 +153,7 @@ class MarkdownDatasetModule:
         train_ds = MarkdownDataset(
             self.markdown_train,
             features=self.train_features,
+            preprocessor=self.preprocessor,
             total_max_len=self.total_max_len,
             md_max_len=self.md_max_len,
             model_name=self.model_name
@@ -205,6 +162,7 @@ class MarkdownDatasetModule:
         val_ds = MarkdownDataset(
             self.markdown_val,
             features=self.val_features,
+            preprocessor=self.preprocessor,
             total_max_len=self.total_max_len,
             md_max_len=self.md_max_len,
             model_name=self.model_name
@@ -213,6 +171,7 @@ class MarkdownDatasetModule:
         test_ds = MarkdownDataset(
             self.markdown_test,
             features=self.test_features,
+            preprocessor=self.preprocessor,
             total_max_len=self.total_max_len,
             md_max_len=self.md_max_len,
             model_name=self.model_name
