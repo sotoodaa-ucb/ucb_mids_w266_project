@@ -24,10 +24,10 @@ pip install -r requirements.txt
 ## Usage
 ```
 # Start training.
-python w266_project train.py
+python w266_project/train.py
 
 # Run test inference.
-python w266_project test.py
+python w266_project/test.py
 ```
 
 
