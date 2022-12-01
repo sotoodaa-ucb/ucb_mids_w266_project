@@ -1,6 +1,75 @@
+import re
 from typing import List, Union
 
 import torch
+from nltk.stem import WordNetLemmatizer
+
+
+def links_to_word(text):
+    return re.sub("https?:\/\/[^\s]+", " link ", text)
+
+
+def no_char(text):
+    text = re.sub(r"\s+[a-zA-Z]\s+", " ", text)
+    text = re.sub(r"\^[a-zA-Z]\s+", " ", text)
+    text = re.sub(r"\s+[a-zA-Z]$", " ", text)
+    return text
+
+
+def no_html_tags(text):
+    return re.sub("<.*?>", " ", text)
+
+
+def no_multi_spaces(text):
+    return re.sub(r"\s+", " ", text, flags=re.I)
+
+
+def lemmatize(text):
+    stemmer = WordNetLemmatizer()
+
+    tokens = text.split()
+    tokens = [stemmer.lemmatize(word) for word in tokens]
+    return " ".join(tokens)
+
+
+def underscore_to_space(text: str):
+    text = text.replace("_", " ")
+    text = text.replace("-", " ")
+    return text
+
+
+def no_markdown_special(text: str):
+    try:
+        text = text[0] + re.sub(r"(?<!\n)[\*\+\-\>]", " ", text[1:])
+        text = re.sub(r"\(\)\[\]\{\}\<\>\~\|\`\.", " ", text)
+    except IndexError:
+        return ''
+    return text
+
+
+def code_preprocess(code):
+    code = links_to_word(code)
+    code = lemmatize(code)
+    return code
+
+
+def markdown_preprocess(code: str):
+    """
+    1. Replace new lines with unused token.
+    2. Remove HTML Tags and special markdown symbols.
+    3. Clear html tags first, then markdown...
+    """
+    code = code.replace("\n", "[unused1]")
+    code = links_to_word(code)
+    code = no_html_tags(code)
+    code = no_markdown_special(code)
+    code = no_multi_spaces(code)
+    code = lemmatize(code)
+    return code
+
+
+def preprocessor(text: str, cell_type: str):
+    return dict(code=code_preprocess, markdown=markdown_preprocess)[cell_type](text)
 
 
 class Preprocessor:
