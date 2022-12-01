@@ -33,7 +33,7 @@ python w266_project/test.py
 
 ## Examples
 
-![test](./res/example_1.png)
+![test](./res/example_2.png)
 
 | content                                           |   actual_pct_rank |   predicted_pct_rank |
 |:--------------------------------------------------|------------------:|---------------------:|
