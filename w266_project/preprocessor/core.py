@@ -1,6 +1,7 @@
 import re
 from typing import List, Union
 
+import numpy as np
 import torch
 from nltk.stem import WordNetLemmatizer
 
@@ -166,3 +167,97 @@ class Preprocessor:
 
         # Tokens, attention mask, markdown percentage feature, and label.
         return ids, mask, features
+
+
+class PreprocessorV2:
+    """ Compatible with CodeMarkdown model. """
+    def __init__(
+        self,
+        markdown_tokenizer,
+        code_tokenizer,
+        md_max_len: int = 200,
+        total_max_len: int = 400,
+        with_features: bool = False
+    ):
+        self.markdown_tokenizer = markdown_tokenizer
+        self.code_tokenizer = code_tokenizer
+        self.with_features = with_features
+        self.md_max_len = md_max_len
+        self.total_max_len = total_max_len
+
+    def preprocess(
+        self,
+        markdown_inputs: Union[str, List[str]],
+        code_inputs: List[List[str]]
+    ):
+        if self.with_features and isinstance(self.markdown_inputs, str):
+            raise ValueError('markdown_input must be List[str] if with_features=True')
+
+        if isinstance(markdown_inputs, list) and markdown_inputs:
+            markdown_input = markdown_inputs[0]
+        else:
+            markdown_input = markdown_inputs
+
+        # Encode markdown into embedding.
+        markdown_inputs = self.markdown_tokenizer.encode_plus(
+            markdown_input,
+            None,
+            add_special_tokens=True,
+            max_length=self.md_max_len,
+            padding="max_length",
+            return_token_type_ids=True,
+            truncation=True
+        )
+
+        # Encode code into embedding.
+        # Batch encode does not like empty lists!
+        code_inputs = self.code_tokenizer.batch_encode_plus(
+            [str(cell) for cell in code_inputs] if len(code_inputs) > 0 else [''],
+            add_special_tokens=True,
+            max_length=23,
+            padding="max_length",
+            truncation=True
+        )
+
+        # Get markdown embedding tokens.
+        markdown_ids = markdown_inputs['input_ids']
+        markdown_ids = markdown_ids[:self.total_max_len]
+
+        # Apply padding if code + markdown tokens is less than max.
+        if len(markdown_ids) < self.total_max_len:
+            markdown_ids = markdown_ids + [self.markdown_tokenizer.pad_token_id, ] * (self.total_max_len - len(markdown_ids))
+
+        markdown_ids = torch.LongTensor(markdown_ids)
+
+        # Get code embedding tokens.
+        code_ids = list(np.array(code_inputs['input_ids']).flatten())
+        code_ids = code_ids[:self.total_max_len]
+
+        # Apply padding if code + markdown tokens is less than max.
+        if len(code_ids) < self.total_max_len:
+            code_ids = code_ids + [self.code_tokenizer.pad_token_id, ] * (self.total_max_len - len(code_ids))
+
+        code_ids = torch.LongTensor(code_ids)
+
+        # Markdown masks
+        markdown_mask = markdown_inputs['attention_mask']
+        markdown_mask = markdown_mask[:self.total_max_len]
+
+        if len(markdown_mask) != self.total_max_len:
+            markdown_mask = markdown_mask + [self.markdown_tokenizer.pad_token_id, ] * (self.total_max_len - len(markdown_mask))
+        markdown_mask = torch.LongTensor(markdown_mask)
+
+        # Do the same for the code attention mask.
+        code_mask = markdown_inputs['attention_mask']
+        code_mask = code_mask[:self.total_max_len]
+
+        if len(code_mask) != self.total_max_len:
+            code_mask = code_mask + [self.code_tokenizer.pad_token_id, ] * (self.total_max_len - len(code_mask))
+        code_mask = torch.LongTensor(code_mask)
+
+        # Tokens should be equal to the maximum length.
+        assert len(markdown_ids) == self.total_max_len
+        assert len(code_ids) == self.total_max_len
+
+        # Tokens, attention mask, markdown percentage feature, and label.
+        return code_ids, code_mask, markdown_ids, markdown_mask

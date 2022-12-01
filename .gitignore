@@ -12,8 +12,6 @@ w266
 # Temporary data folder.
 w266_project/data
 
-# Temporary model store.
-w266_project/models
-
 # Model weights are too large for git.
-!w266_project/models/artifacts/**/*.py
+w266_project/models/artifacts/*
+!w266_project/models/artifacts/__init__.py

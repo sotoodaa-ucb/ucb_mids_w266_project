@@ -6,7 +6,7 @@ from typing import List, Tuple, Union
 import torch
 
 from w266_project.models.core import MODEL_TYPE_DICT, ModelType
-from w266_project.preprocessor.core import Preprocessor
+from w266_project.preprocessor.core import Preprocessor, PreprocessorV2
 
 
 class Engine(ABC):
@@ -38,6 +38,13 @@ class Engine(ABC):
                 markdown_tokenizer=self.model.code_tokenizer,
                 code_tokenizer=self.model.code_tokenizer
             )
+        elif self.model_type == ModelType.CODE_MARKDOWN or self.model_type == ModelType.CODE_MARKDOWN_V2:
+            preprocessor = PreprocessorV2(
+                markdown_tokenizer=self.model.markdown_tokenizer,
+                code_tokenizer=self.model.code_tokenizer
+            )
+        else:
+            raise ValueError(f'{self.model_type} is not a valid model type! Please assign a preprocessor.')
 
         return preprocessor.preprocess(
             markdown_inputs=markdown_inputs,
@@ -70,8 +77,10 @@ class PyTorchEngine(Engine):
 
     def predict(
         self,
-        ids_tensor: List[int],
-        mask_tensor: List[List[int]],
+        code_ids_tensor: List[int],
+        code_mask_tensor: List[List[int]],
+        markdown_ids_tensor: List[int] = None,
+        markdown_mask_tensor: List[int] = None,
         feature_tensor: torch.Tensor = None
     ):
         # Evaluation mode improves inference performance by turning off BatchNorms and Dropouts.
@@ -79,8 +88,17 @@ class PyTorchEngine(Engine):
 
         # Inference, unsqueeze to convert to 2D tensor from 1D tensor.
         if feature_tensor:
-            raw_prediction = self.model(ids_tensor.unsqueeze(0), mask_tensor.unsqueeze(0), feature_tensor.unsqueeze(0))
+            raw_prediction = self.model(
+                code_ids_tensor.unsqueeze(0),
+                code_mask_tensor.unsqueeze(0),
+                feature_tensor.unsqueeze(0)
+            )
         else:
-            raw_prediction = self.model(ids_tensor.unsqueeze(0), mask_tensor.unsqueeze(0))
+            raw_prediction = self.model(
+                code_ids_tensor.unsqueeze(0),
+                code_mask_tensor.unsqueeze(0),
+                markdown_ids_tensor.unsqueeze(0),
+                markdown_mask_tensor.unsqueeze(0)
+            )
 
         return raw_prediction
