@@ -6,6 +6,14 @@ build/
 
 __pycache__
 
+# Build folder.
 w266
+
+# Temporary data folder.
 w266_project/data
-tmp
+
+# Temporary model store.
+w266_project/models
+
+# Model weights are too large for git.
+!w266_project/models/artifacts/**/*.py

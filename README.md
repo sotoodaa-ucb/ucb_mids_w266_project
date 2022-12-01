@@ -1,6 +1,17 @@
-# MIDS W266 Project: Natural Language Processing
+<h1 align="center">
+ MIDS W266 Project
+</h1>
+
+<h1 align="center">
+NotebookNet - An Explorative Machine Learning Approach in Code Comprehension
+</h1>
 
 ![flake8](https://github.com/sotoodaa-ucb/ucb_mids_w266_project/actions/workflows/flake8.yml/badge.svg)
+
+## Members
+- Qian Qiao
+- Sophie Yeh
+- Andrew Sotoodeh
 
 ## Overview
 Install requirements:
@@ -8,15 +19,7 @@ Install requirements:
 pip install -r requirements.txt
 ```
 
-There are known issues with installing dependencies on M1 Mac.
-```
-# Problem
-error: can't find Rust compiler
 
-# Solution
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
-```
 
 ## Usage
 ```
@@ -39,7 +42,16 @@ python w266_project test.py
 | def add(a: int, b: int) -> int: return a + b      |              0.75 |             0.75     |
 | def multiply(a: int, b: int) -> int: return a * b |              1    |             1        |
 
-## Members
-- Qian Qiao
-- Sophie Yeh
-- Andrew Sotoodeh
+
+
+
+# Troubleshooting
+There are known issues with installing dependencies on M1 Mac.
+```
+# Problem
+error: can't find Rust compiler
+
+# Solution
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+```
