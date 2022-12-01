@@ -1,4 +1,3 @@
-import wget
 import gdown
 import os
 from abc import ABC, abstractmethod
