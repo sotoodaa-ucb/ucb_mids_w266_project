@@ -35,6 +35,8 @@ python w266_project/test.py
 
 ![test](./res/example_2.png)
 
+<center>
+
 | content                                           |   actual_pct_rank |   predicted_pct_rank |
 |:--------------------------------------------------|------------------:|---------------------:|
 | import numpy as np                                |          0.333333 |             0.333333 |
@@ -44,8 +46,7 @@ python w266_project/test.py
 | def multiply(a: int, b: int) -> int: return a * b |          0.833333 |             0.833333 |
 | def divide(a: int, b: int) -> int: return a // b  |          1        |             1        |
 
-
-
+</center>
 
 # Troubleshooting
 There are known issues with installing dependencies on M1 Mac.
