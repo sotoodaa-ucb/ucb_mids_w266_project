@@ -225,7 +225,8 @@ class PreprocessorV2:
 
         # Apply padding if code + markdown tokens is less than max.
         if len(markdown_ids) < self.total_max_len:
-            markdown_ids = markdown_ids + [self.markdown_tokenizer.pad_token_id, ] * (self.total_max_len - len(markdown_ids))
+            markdown_ids = markdown_ids + \
+                [self.markdown_tokenizer.pad_token_id, ] * (self.total_max_len - len(markdown_ids))
 
         markdown_ids = torch.LongTensor(markdown_ids)
 
@@ -244,7 +245,8 @@ class PreprocessorV2:
         markdown_mask = markdown_mask[:self.total_max_len]
 
         if len(markdown_mask) != self.total_max_len:
-            markdown_mask = markdown_mask + [self.markdown_tokenizer.pad_token_id, ] * (self.total_max_len - len(markdown_mask))
+            markdown_mask = markdown_mask + \
+                [self.markdown_tokenizer.pad_token_id, ] * (self.total_max_len - len(markdown_mask))
         markdown_mask = torch.LongTensor(markdown_mask)
 
         # Do the same for the code attention mask.
