@@ -35,12 +35,14 @@ python w266_project/test.py
 
 ![test](./res/example_1.png)
 
-| Content                                           |   Actual Percentile Rank|   Predicted Percentile Rank |
+| content                                           |   actual_pct_rank |   predicted_pct_rank |
 |:--------------------------------------------------|------------------:|---------------------:|
-| import numpy as np                                |              0.25 |             0.25     |
-| **# This adds two numbers and returns the sum.**      |              **0.5**  |             **0.445386** ✅|
-| def add(a: int, b: int) -> int: return a + b      |              0.75 |             0.75     |
-| def multiply(a: int, b: int) -> int: return a * b |              1    |             1        |
+| import numpy as np                                |          0.333333 |             0.333333 |
+| # This adds two numbers and returns the sum.      |          0.166667 |             0.396025  ✅|
+| def add(a: int, b: int) -> int: return a + b      |          0.5      |             0.5      |
+| def subtract(a: int, b: int) -> int: return a - b |          0.666667 |             0.666667 |
+| def multiply(a: int, b: int) -> int: return a * b |          0.833333 |             0.833333 |
+| def divide(a: int, b: int) -> int: return a // b  |          1        |             1        |
 
 
 
