@@ -9,6 +9,7 @@ NotebookNet - An Explorative Machine Learning Approach in Code Comprehension
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 ![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white)
 ![https://drive.google.com/drive/folders/1mZILOzPW7pw0siHYzowtgDRLFAMEoKRr](https://img.shields.io/badge/Google%20Drive-4285F4?style=for-the-badge&logo=googledrive&logoColor=white)
+![https://wandb.ai/sotoodaa/w266-project](https://img.shields.io/badge/Weights_&_Biases-FFCC33?style=for-the-badge&logo=WeightsAndBiases&logoColor=black)
 
 ![flake8](https://github.com/sotoodaa-ucb/ucb_mids_w266_project/actions/workflows/flake8.yml/badge.svg)
 [![PyPi version](https://badgen.net/pypi/v/w266-project/)](https://pypi.com/project/w266-project/)
