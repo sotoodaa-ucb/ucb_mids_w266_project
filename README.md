@@ -29,6 +29,12 @@ pip install -r requirements.txt
 
 ## Usage
 ```
+# Clone repo and change directory.
+git clone https://github.com/sotoodaa-ucb/ucb_mids_w266_project.git && cd ucb_mids_w266_project
+
+# (Optional) Create virtual environment.
+python3 -m venv w266
+
 # Start training.
 python w266_project/train.py
 
