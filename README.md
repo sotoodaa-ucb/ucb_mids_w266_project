@@ -34,11 +34,11 @@ With the Google AI4Code Kaggle competition, we plan to explore how to predict th
 # Clone repo and change directory.
 git clone https://github.com/sotoodaa-ucb/ucb_mids_w266_project.git && cd ucb_mids_w266_project
 
-# Install python requirements.
-pip install -r requirements.txt
-
 # (Optional) Create virtual environment.
 python3 -m venv w266
+
+# Install python requirements.
+pip install -r requirements.txt
 
 # Start training.
 python w266_project/train.py
