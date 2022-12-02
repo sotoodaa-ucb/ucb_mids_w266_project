@@ -15,7 +15,7 @@ class CodeMarkdownModel(nn.Module):
         self.code_tokenizer = AutoTokenizer.from_pretrained(code_tokenizer_name)
         self.markdown_tokenizer = AutoTokenizer.from_pretrained(markdown_tokenizer_name)
 
-        # Bert embeddings are 768-d + 1 for code cell percentage.
+        # Bert embeddings are 1536 (768 x 2) codebert + bert.
         self.top = nn.Linear(1536, 1)
 
     def forward(self, code_ids, code_mask, markdown_ids, markdown_mask):

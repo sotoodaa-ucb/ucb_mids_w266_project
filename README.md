@@ -20,17 +20,22 @@ NotebookNet - An Explorative Machine Learning Approach in Code Comprehension
 - Andrew Sotoodeh
 
 ## Overview
-Install requirements:
-```
-pip install -r requirements.txt
-```
+Research teams across the world are interested in exploring the domain of assistive technology for software engineers. Much like Github Copilot and Amazon CodeWhisperer, understanding natural language and its intrinsic relationship with programming languages could lead to significant improvements in developer productivity and revolutionize the industry standard for writing code.
+
+With the Google AI4Code Kaggle competition, we plan to explore how to predict the correct ordering of the cells in a given Jupyter notebook whose markdown cells have been shuffled. Given an understanding of code cell relationships to markdown comments, it is possible to develop productivity tools that aid in the automatic reconstruction of a notebook's order and readability.
+
+
+![baseline](./res/baseline.png)
 
 
 
 ## Usage
-```
+```bash
 # Clone repo and change directory.
 git clone https://github.com/sotoodaa-ucb/ucb_mids_w266_project.git && cd ucb_mids_w266_project
+
+# Install python requirements.
+pip install -r requirements.txt
 
 # (Optional) Create virtual environment.
 python3 -m venv w266
@@ -65,4 +70,12 @@ error: can't find Rust compiler
 # Solution
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
+```
+
+```
+# Problem
+ExecutableNotFound: failed to execute PosixPath('dot'), make sure the Graphviz executables are on your systems' PATH
+
+# Solution
+brew install graphviz
 ```

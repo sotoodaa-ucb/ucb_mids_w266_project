@@ -15,6 +15,7 @@ transformers
 fastparquet
 scikit-learn
 torch
+torchviz
 nltk
 wandb
 gdown
