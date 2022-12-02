@@ -6,8 +6,13 @@
 NotebookNet - An Explorative Machine Learning Approach in Code Comprehension
 </h1>
 
-![flake8](https://github.com/sotoodaa-ucb/ucb_mids_w266_project/actions/workflows/flake8.yml/badge.svg)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white)
+![https://drive.google.com/drive/folders/1mZILOzPW7pw0siHYzowtgDRLFAMEoKRr](https://img.shields.io/badge/Google%20Drive-4285F4?style=for-the-badge&logo=googledrive&logoColor=white)
 
+![flake8](https://github.com/sotoodaa-ucb/ucb_mids_w266_project/actions/workflows/flake8.yml/badge.svg)
+[![PyPi version](https://badgen.net/pypi/v/w266-project/)](https://pypi.com/project/w266-project/)
+[![GitHub license](https://badgen.net/github/license/Naereen/Strapdown.js)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
 ## Members
 - Qian Qiao
 - Sophie Yeh
@@ -35,8 +40,6 @@ python w266_project/test.py
 
 ![test](./res/example_2.png)
 
-<center>
-
 | content                                           |   actual_pct_rank |   predicted_pct_rank |
 |:--------------------------------------------------|------------------:|---------------------:|
 | import numpy as np                                |          0.333333 |             0.333333 |
@@ -45,8 +48,6 @@ python w266_project/test.py
 | def subtract(a: int, b: int) -> int: return a - b |          0.666667 |             0.666667 |
 | def multiply(a: int, b: int) -> int: return a * b |          0.833333 |             0.833333 |
 | def divide(a: int, b: int) -> int: return a // b  |          1        |             1        |
-
-</center>
 
 # Troubleshooting
 There are known issues with installing dependencies on M1 Mac.
