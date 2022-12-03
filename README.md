@@ -25,7 +25,7 @@ Research teams across the world are interested in exploring the domain of assist
 With the Google AI4Code Kaggle competition, we plan to explore how to predict the correct ordering of the cells in a given Jupyter notebook whose markdown cells have been shuffled. Given an understanding of code cell relationships to markdown comments, it is possible to develop productivity tools that aid in the automatic reconstruction of a notebook's order and readability.
 
 
-![baseline](./res/baseline.png)
+![baseline](./res/notebooknet.png)
 
 
 

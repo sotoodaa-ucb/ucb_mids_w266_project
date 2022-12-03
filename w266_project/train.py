@@ -31,7 +31,7 @@ def main():
     model = MarkdownModel()
 
     # Begin training process.
-    model, _ = train(model, train_loader, val_loader, dataset.val_df, dataset.order_df, epochs=1)
+    model, _ = train(model, train_loader, val_loader, dataset.val_df, dataset.order_df, epochs=1, lr=0.0001)
 
     # Clear resources.
     cleanup(model)
@@ -52,6 +52,7 @@ def train(
     val_df: pd.DataFrame,
     order_df: pd.DataFrame,
     epochs: int,
+    lr: float = 0.0001,
     use_wandb: bool = False
 ):
     if use_wandb:
@@ -82,7 +83,7 @@ def train(
     # To reproduce BertAdam specific behavior set correct_bias=False
     optimizer = AdamW(
         optimizer_grouped_parameters,
-        lr=3e-5,
+        lr=lr,
         correct_bias=False
     )
 
