@@ -8,8 +8,8 @@ from w266_project.utils import download_nltk_resources
 def main():
     download_nltk_resources()
 
-    # markdown_content = '# This imports numpy library.'
     markdown_content = '# This adds two numbers and returns the sum.'
+    # markdown_content = '# This imports numpy library.'
 
     code_cells = [
         'import numpy as np',
@@ -19,9 +19,14 @@ def main():
         'def divide(a: int, b: int) -> int: return a // b',
     ]
 
+    # The correct order.
     notebook_content = [
+        'import numpy as np',
         markdown_content,
-        *code_cells
+        'def add(a: int, b: int) -> int: return a + b',
+        'def subtract(a: int, b: int) -> int: return a - b',
+        'def multiply(a: int, b: int) -> int: return a * b',
+        'def divide(a: int, b: int) -> int: return a // b',
     ]
 
     model_type = ModelType.CODE_MARKDOWN

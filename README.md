@@ -54,8 +54,8 @@ python w266_project/test.py
 
 | content                                           |   actual_pct_rank |   predicted_pct_rank |
 |:--------------------------------------------------|------------------:|---------------------:|
-| import numpy as np                                |          0.333333 |             0.333333 |
-| # This adds two numbers and returns the sum.      |          0.166667 |             0.396025  ✅|
+| import numpy as np                                |          0.166667 |             0.166667 |
+| # This adds two numbers and returns the sum.      |          0.333333 |             0.396025 ✅|
 | def add(a: int, b: int) -> int: return a + b      |          0.5      |             0.5      |
 | def subtract(a: int, b: int) -> int: return a - b |          0.666667 |             0.666667 |
 | def multiply(a: int, b: int) -> int: return a * b |          0.833333 |             0.833333 |
